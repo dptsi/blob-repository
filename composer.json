@@ -1,0 +1,22 @@
+{
+    "name": "myits/blob-repository",
+    "description": "Upload Blob to repository ITS.",
+    "keywords": ["upload", "blob", "ITS"],
+    "homepage": "https://git.its.ac.id/umar/simkeu",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Umar Hasan",
+            "email": "umarhasan@its.ac.id"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MyITS\\BlobRepository\\": "src/"
+        }
+    }
+    
+}
