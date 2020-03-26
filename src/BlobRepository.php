@@ -24,14 +24,112 @@ class BlobRepository implements Contract
 
     private $image;
 
+    private $file;
+
     private $filename;
+
+    private $file_ext;
+
+    private $mime_content_type;
 
     private $metadata;
 
-    public function __construct($client_id, $client_secret)
+    private $xCode;
+
+    public function __construct($client_id = null, $client_secret = null)
     {
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
+
+        $xCode = $this->getXcode();
+        $this->setHeaders(['headers' => [
+            'x-client-id' => $client_id,
+            'x-code' => $xCode,
+            'content-type' => 'application/json',
+        ]]);
+
+    }
+
+    public function getXCode()
+    {
+        if (isset($_SESSION['blob_repository_xcode'])) {
+            if ($this->isXCodeNotExpire()) {
+
+            } else {
+                $this->getAccessToken();
+            }
+            return $this->xCode;
+        } else {
+            $this->getAccessToken();
+            return $this->xCode;
+        }
+    }
+
+    public function setXCode($xCode)
+    {
+        $this->xCode = $xCode;
+    }
+
+    public function getAccessToken()
+    {
+
+        // curl --location --request POST "https://dev-my.its.ac.id/token" --header "Host: dev-my.its.ac.id"
+        // --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "grant_type=client_credentials"
+        // --data-urlencode "client_id=080507F5-DA58-45D2-B516-FD1BEFE7345B" --data-urlencode "client_secret="
+        // OK cool - then let's create a new cURL resource handle
+
+        $client = new Client();
+
+        $headers = [
+            'Host' => 'dev-my.its.ac.id',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $body = [
+            'form_params' => [
+                'grant_type' => 'client_credentials',
+                'client_id' => $this->client_id,
+                'client_secret' => $this->client_secret,
+            ],
+        ];
+        $data = \array_merge($headers, $body);
+        $response = $client->request('POST', 'https://dev-my.its.ac.id/token', $data);
+        $response = json_decode($response->getBody()->getContents());
+        if (isset($_SESSION)) {
+            @session_start();
+        }
+        $_SESSION['blob_repository_xcode'] = $response->access_token;
+        $_SESSION['blob_repository_token'] = $response;
+        $this->setXCode($response->access_token);
+        return $response->access_token;
+    }
+
+    /**
+     * Wether xcode expired and need to refresh
+     *
+     * @return boolean
+     */
+    public function isXCodeNotExpire()
+    {
+        $client = new Client();
+
+        $headers = [
+            'x-client-id' => $this->client_id,
+            'x-code' => $this->xCode,
+            'Content-Type' => 'application/json',
+        ];
+
+        $data = $headers;
+        $response = $client->request('GET', 'http://10.199.2.140:9999/d/files', $data);
+        $response = json_decode($response->getBody()->getContents());
+
+        if (isset($response['status'])) {
+            if ($response['status'] == 'ERROR') {
+                return false;
+            }
+            return true;
+        }
+
     }
 
     /**
@@ -50,16 +148,17 @@ class BlobRepository implements Contract
      * @param $image
      * @return string
      */
-    private function fileType($image)
+    private function fileType($file)
     {
-        var_dump($image);
-        if ($image['error'] == 0) {
-            $this->filename = $image['name'];
+        if ($file['error'] == 0) {
+            $this->filename = $file['name'];
+            $file_ext = explode(".", $file['name']);
+            $this->file_ext = end($file_ext);
+            $this->mime_content_type = $file['type'];
             $this->metadata = [];
-            return base64_encode(file_get_contents($image['tmp_name']));
+            return base64_encode(file_get_contents($file['tmp_name']));
         }
-
-        return $image;
+        return $file;
     }
 
     /**
@@ -82,16 +181,6 @@ class BlobRepository implements Contract
      */
     private function getHeaders()
     {
-        if (empty($this->headers)) {
-            return [
-                'headers' => [
-                    'x-client-id' => 'kucinglucu',
-                    'x-code' => '1234_015f23075cc0816b8f7f30d2ba8a7641',
-                    'content-type' => 'application/json',
-                ],
-            ];
-        }
-
         return $this->headers;
     }
 
@@ -118,14 +207,22 @@ class BlobRepository implements Contract
         if (empty($this->params)) {
             return [
                 'body' => json_encode([
-                    'nama' => $this->filename,
-                    'binary_data_b64' => $this->image,
-                    'metadata' => $this->metadata,
-                ]),
+                    'file_name' => $this->filename,
+                    'file_ext' => $this->file_ext,
+                    'mime_type' => $this->mime_content_type,
+                    'binary_data_b64' => $this->file,
+                ], JSON_UNESCAPED_SLASHES),
             ];
         }
 
         return $this->params;
+    }
+
+    private function setFile($file)
+    {
+        $this->file = $file;
+
+        return $this;
     }
 
     private function setImage($image)
@@ -157,16 +254,53 @@ class BlobRepository implements Contract
         return $this;
     }
 
+    public function storeFile($file)
+    {
+        $client = new Client();
+
+        $uploadPath = '/d/files';
+
+        $this->setFile($this->fileType($file));
+        ini_set("xdebug.var_display_max_children", -1);
+        ini_set("xdebug.var_display_max_data", -1);
+        ini_set("xdebug.var_display_max_depth", -1);
+        $data = array_merge($this->getHeaders(), $this->getFormParams());
+        var_dump($data);
+        $response = $client->request('POST', $this->url . $uploadPath, $data);
+
+        $this->setResponse(json_decode($response->getBody()->getContents()));
+        return $this;
+    }
+
     /**
      * get uploaded image etag.
      *
      * @return mixed
      */
-    public function etag()
+    public function file_id()
     {
-        return $this->response->info->etag;
+        return $this->response->info->file_id;
     }
 
+    public function file_name()
+    {
+        return $this->response->info->file_name;
+    }
+
+    public function tag()
+    {
+        return $this->response->info->tag;
+    }
+
+    public function timestamp()
+    {
+        return $this->response->info->timestamp;
+    }
+
+    public function public_link()
+    {
+        return $this->response->info->public_link;
+    }
     /**
      * get uploaded image size.
      *
@@ -174,7 +308,7 @@ class BlobRepository implements Contract
      */
     public function filesize()
     {
-        return $this->response->info->size;
+        return $this->response->info->file_size;
     }
 
     /**
@@ -215,10 +349,15 @@ class BlobRepository implements Contract
     public function usual()
     {
         return [
-            'etag' => $this->etag(),
+            'file_id' => $this->file_id(),
             'filesize' => $this->filesize(),
-            'type' => $this->type(),
+            'type' => $this->mime_content_type,
             'filename' => $this->filename,
+            'tag' => $this->tag(),
+            'timestamp' => $this->response->info->timestamp,
+            'messate' => $this->response->message,
+            'status' => $this->response->status,
+            'publicLink' => $this->response->info->public_link,
         ];
     }
 
@@ -253,17 +392,12 @@ class BlobRepository implements Contract
      * @param string $etag
      * @return void
      */
-    public function getFile($etag = '')
+    public function getFile($file_id = '')
     {
         $client = new Client();
-        $searchPath = '/c/get_file';
-        $data = [
-            'body' => json_encode([
-                'tag' => $etag,
-            ]),
-        ];
-        $data = array_merge($this->getHeaders(), $data);
-        $response = $client->request('GET', $this->url . $searchPath, $data);
+        $searchPath = '/d/files/'.$file_id;
+        
+        $response = $client->request('GET', $this->url . $searchPath, $this->getHeaders());
         $this->setResponse(json_decode($response->getBody()->getContents()));
         return $this;
     }

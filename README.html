@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Requirements</title>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+        
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        
+        
+    </head>
+    <body class="vscode-light">
+        <h1 id="its-blob-repository-dev">ITS Blob Repository (DEV)</h1>
+<p>Library for connecting to blob repo</p>
+<h1 id="requirements">Requirements</h1>
+<ol>
+<li>PHP 5.4 ++</li>
+<li>guzzle</li>
+</ol>
+<p>example is in test-upload.php</p>
+<h1 id="instalation">Instalation</h1>
+<pre><code>add composer.json
+    &quot;myits/blob-repository&quot;: &quot;dev-master&quot;
+
+after require section add this
+    &quot;repositories&quot;: [
+        {
+            &quot;type&quot;: &quot;vcs&quot;,
+            &quot;url&quot;: &quot;https://git.its.ac.id/umar/blob-repository.git&quot;
+        }
+    ]
+</code></pre>
+<h1 id="usage">Usage</h1>
+<pre><code>Upload 
+</code></pre>
+
+    </body>
+    </html>

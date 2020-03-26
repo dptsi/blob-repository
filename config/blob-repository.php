@@ -1,10 +1,6 @@
 <?php
 return [
-    'client_id' => 'dcc258e2-1533-4e99-bb56-7fe400ec99c3',
-    'client_secret' => 'kwkKAsBbQHQy4SAK',
-
+    'client_id' => '080507F5-DA58-45D2-B516-FD1BEFE7345B',
+    'client_secret' => '6vi17be2fn0o0o8gw4g84c4g',
     'url' => 'http://10.199.2.140:9999',
-
-    // 'client_id' => env('IMGUR_CLIENT_ID'),
-    // 'client_secret' => env('IMGUR_CLIENT_SECRET', null),
 ];
