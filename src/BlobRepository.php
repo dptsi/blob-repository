@@ -18,6 +18,8 @@ class BlobRepository implements Contract
 
     const VERSION = '0.0.1';
 
+    private $providerUrl;
+
     private $client_id;
 
     private $client_secret;
@@ -36,8 +38,9 @@ class BlobRepository implements Contract
 
     private $xCode;
 
-    public function __construct($client_id = null, $client_secret = null)
+    public function __construct($providerUrl = null,$client_id = null, $client_secret = null)
     {
+        $this->provider_url = $providerUrl;
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
 
@@ -81,7 +84,7 @@ class BlobRepository implements Contract
         $client = new Client();
 
         $headers = [
-            'Host' => 'dev-my.its.ac.id',
+            'Host' => $this->providerUrl,
             'Content-Type' => 'application/x-www-form-urlencoded',
         ];
 
