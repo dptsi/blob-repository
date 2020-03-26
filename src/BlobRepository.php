@@ -18,7 +18,7 @@ class BlobRepository implements Contract
 
     const VERSION = '0.0.1';
 
-    private $providerUrl;
+    private $provider_url;
 
     private $client_id;
 
@@ -38,9 +38,10 @@ class BlobRepository implements Contract
 
     private $xCode;
 
-    public function __construct($providerUrl = null,$client_id = null, $client_secret = null)
+    public function __construct($provider_url = null,$client_id = null, $client_secret = null)
     {
-        $this->provider_url = $providerUrl;
+        @session_start();
+        $this->provider_url = $provider_url;
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
 
@@ -56,11 +57,11 @@ class BlobRepository implements Contract
     public function getXCode()
     {
         if (isset($_SESSION['blob_repository_xcode'])) {
-            if ($this->isXCodeNotExpire()) {
+            // if ($this->isXCodeNotExpire($_SESSION['blob_repository_xcode'])) {
 
-            } else {
+            // } else {
                 $this->getAccessToken();
-            }
+            // }
             return $this->xCode;
         } else {
             $this->getAccessToken();
@@ -84,7 +85,7 @@ class BlobRepository implements Contract
         $client = new Client();
 
         $headers = [
-            'Host' => $this->providerUrl,
+            'Host' => $this->provider_url,
             'Content-Type' => 'application/x-www-form-urlencoded',
         ];
 
@@ -96,11 +97,10 @@ class BlobRepository implements Contract
             ],
         ];
         $data = \array_merge($headers, $body);
-        $response = $client->request('POST', 'https://dev-my.its.ac.id/token', $data);
+        $provider_url = $this->provider_url.'/token';
+        $response = $client->request('POST', $provider_url, $data);
         $response = json_decode($response->getBody()->getContents());
-        if (isset($_SESSION)) {
-            @session_start();
-        }
+        
         $_SESSION['blob_repository_xcode'] = $response->access_token;
         $_SESSION['blob_repository_token'] = $response;
         $this->setXCode($response->access_token);
@@ -112,18 +112,18 @@ class BlobRepository implements Contract
      *
      * @return boolean
      */
-    public function isXCodeNotExpire()
+    public function isXCodeNotExpire($xCode)
     {
         $client = new Client();
 
         $headers = [
             'x-client-id' => $this->client_id,
-            'x-code' => $this->xCode,
+            'x-code' => $xCode,
             'Content-Type' => 'application/json',
         ];
 
         $data = $headers;
-        $response = $client->request('GET', 'http://10.199.2.140:9999/d/files', $data);
+        $response = $client->request('GET', $this->url.'/d/files', $data);
         $response = json_decode($response->getBody()->getContents());
 
         if (isset($response['status'])) {
