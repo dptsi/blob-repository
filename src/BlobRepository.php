@@ -265,11 +265,7 @@ class BlobRepository implements Contract
         $uploadPath = '/d/files';
 
         $this->setFile($this->fileType($file));
-        ini_set("xdebug.var_display_max_children", -1);
-        ini_set("xdebug.var_display_max_data", -1);
-        ini_set("xdebug.var_display_max_depth", -1);
         $data = array_merge($this->getHeaders(), $this->getFormParams());
-        var_dump($data);
         $response = $client->request('POST', $this->url . $uploadPath, $data);
 
         $this->setResponse(json_decode($response->getBody()->getContents()));
