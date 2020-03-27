@@ -35,6 +35,7 @@ Library for connecting to blob repo
     Upload 
     $file Upload = $blobUpload->storeFile($_FILES['fileToUpload']);
 
+    
     Get File 
     $file  = $blobUpload->getFile($file_id');
 
@@ -46,4 +47,5 @@ Library for connecting to blob repo
     timestamp()
     public_link()
     
+    To get responses from server access $file->response
  
