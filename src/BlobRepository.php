@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class BlobRepository implements Contract
 {
-    protected $url = 'http://10.199.2.140:9999';
+    protected $url = 'https://storage-api.its.ac.id';
 
     protected $headers = [];
 
@@ -38,12 +38,13 @@ class BlobRepository implements Contract
 
     private $xCode;
 
-    public function __construct($provider_url = null,$client_id = null, $client_secret = null)
+    public function __construct($provider_url = null, $client_id = null, $client_secret = null, $url = 'https://storage-api.its.ac.id')
     {
         @session_start();
         $this->provider_url = $provider_url;
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
+        $this->url = $url;
 
         $xCode = $this->getXcode();
         $this->setHeaders(['headers' => [
@@ -60,7 +61,7 @@ class BlobRepository implements Contract
             // if ($this->isXCodeNotExpire($_SESSION['blob_repository_xcode'])) {
 
             // } else {
-                $this->getAccessToken();
+            $this->getAccessToken();
             // }
             return $this->xCode;
         } else {
@@ -97,10 +98,10 @@ class BlobRepository implements Contract
             ],
         ];
         $data = \array_merge($headers, $body);
-        $provider_url = $this->provider_url.'/token';
+        $provider_url = $this->provider_url . '/token';
         $response = $client->request('POST', $provider_url, $data);
         $response = json_decode($response->getBody()->getContents());
-        
+
         $_SESSION['blob_repository_xcode'] = $response->access_token;
         $_SESSION['blob_repository_token'] = $response;
         $this->setXCode($response->access_token);
@@ -123,7 +124,7 @@ class BlobRepository implements Contract
         ];
 
         $data = $headers;
-        $response = $client->request('GET', $this->url.'/d/files', $data);
+        $response = $client->request('GET', $this->url . '/d/files', $data);
         $response = json_decode($response->getBody()->getContents());
 
         if (isset($response['status'])) {
@@ -398,8 +399,8 @@ class BlobRepository implements Contract
     public function getFile($file_id = '')
     {
         $client = new Client();
-        $searchPath = '/d/files/'.$file_id;
-        
+        $searchPath = '/d/files/' . $file_id;
+
         $response = $client->request('GET', $this->url . $searchPath, $this->getHeaders());
         $this->setResponse(json_decode($response->getBody()->getContents()));
         return $this;
