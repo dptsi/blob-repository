@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class BlobRepository implements Contract
 {
-    protected $url = 'https://storage-api.its.ac.id';
+    protected $url = '';
 
     protected $headers = [];
 
