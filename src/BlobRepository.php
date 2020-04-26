@@ -152,13 +152,20 @@ class BlobRepository implements Contract
      * @param $image
      * @return string
      */
+    private function alnumOnly($string)
+    {
+        $result = preg_replace("/[^a-zA-Z0-9]+/", "", $string);
+        return $result;
+    }
+
     private function fileType($file)
     {
         if ($file['error'] == 0) {
-            $this->filename = $file['name'];
             $file_ext = explode(".", $file['name']);
             $this->file_ext = end($file_ext);
             $this->mime_content_type = $file['type'];
+            $filename = substr($file['name'], 0, strrpos($file['name'], "."));
+            $this->filename = $this->alnumOnly($filename);
             $this->metadata = [];
             return base64_encode(file_get_contents($file['tmp_name']));
         }
