@@ -265,25 +265,12 @@ class BlobRepository implements Contract
         return $this;
     }
 
-    public function storeFile($file)
-    {
-        $client = new Client();
-
-        $uploadPath = '/d/files';
-
-        $this->setFile($this->fileType($file));
-        $data = array_merge($this->getHeaders(), $this->getFormParams());
-        $response = $client->request('POST', $this->url . $uploadPath, $data);
-
-        $this->setResponse(json_decode($response->getBody()->getContents()));
-        return $this;
-    }
-
     /**
      * get uploaded image etag.
      *
      * @return mixed
      */
+
     public function file_id()
     {
         return $this->response->info->file_id;
@@ -405,6 +392,45 @@ class BlobRepository implements Contract
         $searchPath = '/d/files/' . $file_id;
 
         $response = $client->request('GET', $this->url . $searchPath, $this->getHeaders());
+        $this->setResponse(json_decode($response->getBody()->getContents()));
+        return $this;
+    }
+
+    
+    public function storeFile($file)
+    {
+        $client = new Client();
+
+        $uploadPath = '/d/files';
+
+        $this->setFile($this->fileType($file));
+        $data = array_merge($this->getHeaders(), $this->getFormParams());
+        $response = $client->request('POST', $this->url . $uploadPath, $data);
+
+        $this->setResponse(json_decode($response->getBody()->getContents()));
+        return $this;
+    }
+
+    public function updateFile($file, $file_id = '')
+    {
+        $client = new Client();
+
+        $uploadPath = '/d/files' . $file_id;
+
+        $this->setFile($this->fileType($file));
+        $data = array_merge($this->getHeaders(), $this->getFormParams());
+        $response = $client->request('POST', $this->url . $uploadPath, $data);
+
+        $this->setResponse(json_decode($response->getBody()->getContents()));
+        return $this;
+    }
+
+    public function deleteFile($file_id = '')
+    {
+        $client = new Client();
+        $searchPath = '/d/files/' . $file_id;
+
+        $response = $client->request('DELETE', $this->url . $searchPath, $this->getHeaders());
         $this->setResponse(json_decode($response->getBody()->getContents()));
         return $this;
     }
