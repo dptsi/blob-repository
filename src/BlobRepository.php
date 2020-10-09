@@ -229,6 +229,21 @@ class BlobRepository implements Contract
         return $this->params;
     }
 
+    private function getFormParamsUpdate()
+    {
+        if (empty($this->params)) {
+            return [
+                'body' => json_encode([
+                    'file_ext' => $this->file_ext,
+                    'mime_type' => $this->mime_content_type,
+                    'binary_data_b64' => $this->file,
+                ], JSON_UNESCAPED_SLASHES),
+            ];
+        }
+
+        return $this->params;
+    }
+
     private function setFile($file)
     {
         $this->file = $file;
@@ -386,10 +401,10 @@ class BlobRepository implements Contract
      * @param string $etag
      * @return void
      */
-    public function getFile($file_id = '')
+    public function getFile($file_id)
     {
         $client = new Client();
-        $searchPath = '/d/files/' . $file_id;
+        $searchPath = '/d/files/' . $file_id . '?info';
 
         $response = $client->request('GET', $this->url . $searchPath, $this->getHeaders());
         $this->setResponse(json_decode($response->getBody()->getContents()));
@@ -411,21 +426,22 @@ class BlobRepository implements Contract
         return $this;
     }
 
-    public function updateFile($file, $file_id = '')
+    public function updateFile($file, $file_id)
     {
         $client = new Client();
 
-        $uploadPath = '/d/files' . $file_id;
+        $uploadPath = '/d/files/' . $file_id;
 
         $this->setFile($this->fileType($file));
-        $data = array_merge($this->getHeaders(), $this->getFormParams());
+        $data = array_merge($this->getHeaders(), $this->getFormParamsUpdate());
         $response = $client->request('POST', $this->url . $uploadPath, $data);
-
+        
         $this->setResponse(json_decode($response->getBody()->getContents()));
+        dd($this);
         return $this;
     }
 
-    public function deleteFile($file_id = '')
+    public function deleteFile($file_id)
     {
         $client = new Client();
         $searchPath = '/d/files/' . $file_id;
