@@ -30,14 +30,19 @@ Library for connecting to blob repo
     <?php
     require './vendor/autoload.php';
     $blobUpload = new BlobRepository('https://my.its.ac.id','080507F5-DA58-45D2-B516-FD1BEFE7345B', '6vi17be2fn0o0o8gw4g84c4g');
-
-
-    Upload 
-    $file Upload = $blobUpload->storeFile($_FILES['fileToUpload']);
-
     
     Get File 
-    $file  = $blobUpload->getFile($file_id');
+    $file  = $blobUpload->getFile($file_id);
+    
+    
+    Store File 
+    $file Upload = $blobUpload->storeFile($_FILES['fileToUpload']);
+    
+    Delete File 
+    $file Upload = $blobUpload->deleteFile($file_id);
+    
+    Update File 
+    $file Upload = $blobUpload->updateFile($file_id, $_FILES['fileToUpload']);
 
     Methods
 
