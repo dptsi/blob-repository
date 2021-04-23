@@ -404,7 +404,7 @@ class BlobRepository implements Contract
     public function getFile($file_id)
     {
         $client = new Client();
-        $searchPath = '/d/files/' . $file_id . '?info';
+        $searchPath = '/d/files/' . $file_id;
 
         $response = $client->request('GET', $this->url . $searchPath, $this->getHeaders());
         $this->setResponse(json_decode($response->getBody()->getContents()));
