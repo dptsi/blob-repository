@@ -3,25 +3,17 @@ error_reporting(1);
 require_once 'vendor/autoload.php';
 
 use MyITS\BlobRepository\BlobRepository;
-$blobUpload = new BlobRepository('https://my.its.ac.id', 'B6318779-4BD0-4DFF-9CFF-02D408D1DC5E', '2nt9b5dveo84k4kgccosokw8');
+$blobUpload = new BlobRepository('SSO Provider', 'SSO Client ID', 'SSO Secret');
 
 if (isset($_POST["submit"])) {
     $d = $blobUpload->storeFile($_FILES['fileToUpload']);
     var_dump($d->usual());
 }
-// echo "<pre>";
-// var_dump($_POST);
-// die;
+
 if (isset($_POST["update"]) && isset($_POST["file_id"])) {
     $d = $blobUpload->updateFile($_FILES['fileToUpload'], $_POST["file_id"]);
     var_dump($d->usual());
 }
-// $fileid = 'b6a28ce04982912cf1b5a0b553871b31'
-// $search = false;
-// if ($search) {
-//     $d = $blobUpload->getFile('b6a28ce04982912cf1b5a0b553871b31-1');
-//     $data = $d->response->data;
-// }
 
 ?>
 <!DOCTYPE html>
