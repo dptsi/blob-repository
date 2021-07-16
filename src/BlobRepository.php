@@ -434,10 +434,9 @@ class BlobRepository implements Contract
 
         $this->setFile($this->fileType($file));
         $data = array_merge($this->getHeaders(), $this->getFormParamsUpdate());
-        $response = $client->request('POST', $this->url . $uploadPath, $data);
+        $response = $client->request('PUT', $this->url . $uploadPath, $data);
         
         $this->setResponse(json_decode($response->getBody()->getContents()));
-        dd($this);
         return $this;
     }
 
