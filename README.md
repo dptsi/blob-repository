@@ -29,7 +29,7 @@ Library for connecting to blob repo
     Instalation
     <?php
     require './vendor/autoload.php';
-    $blobUpload = new BlobRepository('https://my.its.ac.id','080507F5-DA58-45D2-B516-FD1BEFE7345B', '6vi17be2fn0o0o8gw4g84c4g');
+    $blobUpload = new BlobRepository('SSO Provider', 'SSO Client ID', 'SSO Secret', 'Alamat Storage API (Kosong jika prod)');
     
     Get File 
     $file  = $blobUpload->getFile($file_id);
