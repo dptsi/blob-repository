@@ -42,7 +42,7 @@ Library for connecting to blob repo
     $file Upload = $blobUpload->deleteFile($file_id);
     
     Update File 
-    $file Upload = $blobUpload->updateFile($file_id, $_FILES['fileToUpload']);
+    $file Upload = $blobUpload->updateFile($_FILES['fileToUpload'], $file_id);
 
     Methods
 
