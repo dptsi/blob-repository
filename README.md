@@ -21,7 +21,7 @@ Library for connecting to blob repo
         "repositories": [
             {
                 "type": "vcs",
-                "url": "https://git.its.ac.id/umar/blob-repository.git"
+                "url": "https://github.com/dptsi/blob-repository.git"
             }
         ]
 
