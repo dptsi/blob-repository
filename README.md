@@ -1,7 +1,7 @@
-ITS Blob Repository (DEV)
+DPTSI Blob Repository
 ===========
 
-Library for connecting to blob repo
+Repository ini berisi library PHP yang digunakan untuk mengunggah file ke storage API ITS
 
 
 # Requirements #
@@ -15,7 +15,7 @@ Library for connecting to blob repo
 # Instalation #
 
     add composer.json
-        "myits/blob-repository": "dev-master"
+        "dptsi/blob-repository": "dev-master"
 
     after require section add this
         "repositories": [
