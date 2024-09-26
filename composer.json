@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MyITS\\BlobRepository\\": "src/"
+            "Dptsi\\BlobRepository\\": "src/"
         }
     }
     

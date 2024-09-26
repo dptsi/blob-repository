@@ -1,6 +1,6 @@
 <?php
 
-namespace MyITS\BlobRepository;
+namespace Dptsi\BlobRepository;
 
 interface Contract
 {

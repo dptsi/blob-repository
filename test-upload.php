@@ -2,7 +2,7 @@
 error_reporting(1);
 require_once 'vendor/autoload.php';
 
-use MyITS\BlobRepository\BlobRepository;
+use Dptsi\BlobRepository\BlobRepository;
 $blobUpload = new BlobRepository('https://my.its.ac.id', '786EDC44-1146-424C-A46A-0430763ABA64', 'e6a4aa311cadd91b61323643');
 
 if (isset($_POST["submit"])) {
